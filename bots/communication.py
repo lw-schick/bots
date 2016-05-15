@@ -1490,10 +1490,10 @@ class sftp(_comsession):
                                         ''',
                                     {'tochannel':self.channeldict['idchannel'],'rootidta':self.rootidta,
                                     'status':FILEOUT,'statust':OK}):
+            ta_from = botslib.OldTransaction(row[str('idta')])
+            ta_to = ta_from.copyta(status=EXTERNOUT)
+            tofilename = self.filename_formatter(filename_mask,ta_from)
             try:
-                ta_from = botslib.OldTransaction(row[str('idta')])
-                ta_to = ta_from.copyta(status=EXTERNOUT)
-                tofilename = self.filename_formatter(filename_mask,ta_from)
                 fromfile = botslib.opendata_bin(row[str('filename')], 'rb')
                 tofile = self.session.open(tofilename, mode)    # SSH treats all files as binary. paramiko doc says: b-flag is ignored
                 tofile.write(fromfile.read())
