@@ -1479,6 +1479,8 @@ class sftp(_comsession):
             mode = 'w'
         else:
             mode = 'a'
+        ta_to = None
+        tofilename = None
         for row in botslib.query('''SELECT idta,filename,numberofresends
                                     FROM ta
                                     WHERE idta>%(rootidta)s
@@ -1505,9 +1507,11 @@ class sftp(_comsession):
                     self.session.rename(tofilename_old,tofilename)
             except:
                 txt = botslib.txtexc()
-                ta_to.update(statust=ERROR,errortext=txt,filename='sftp:/'+posixpath.join(self.dirpath,tofilename),numberofresends=row[str('numberofresends')]+1)
+                if ta_to != None and tofilename != None:
+                    ta_to.update(statust=ERROR,errortext=txt,filename='sftp:/'+posixpath.join(self.dirpath,tofilename),numberofresends=row[str('numberofresends')]+1)
             else:
-                ta_to.update(statust=DONE,filename='sftp:/'+posixpath.join(self.dirpath,tofilename),numberofresends=row[str('numberofresends')]+1)
+                if ta_to != None and tofilename != None:
+                    ta_to.update(statust=DONE,filename='sftp:/'+posixpath.join(self.dirpath,tofilename),numberofresends=row[str('numberofresends')]+1)
             finally:
                 ta_from.update(statust=DONE)
 
